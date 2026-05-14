@@ -13,5 +13,3 @@ def parser():
                 trees[path] = e
                 
     return trees
-
-print(parser())
