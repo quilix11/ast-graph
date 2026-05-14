@@ -6,16 +6,26 @@ from src.services.ast_logic.parser import parser
 
 load_dotenv()
 
+
 def mermaid_schema():
+    api_key = os.getenv("API_KEY")
+    model = os.getenv("AI_MODEL", "gemini-1.5-pro")
+
+    if not api_key:
+        raise RuntimeError("Missing API_KEY in environment / .env")
+    if not model:
+        raise RuntimeError("Missing AI_MODEL in environment / .env")
 
     parser_data = parser()
 
-    client = genai.Client(api_key=os.getenv("API_KEY"))
+    client = genai.Client(api_key=api_key)
 
     response = client.models.generate_content(
-        model=os.getenv("AI_MODEL"),
+        model=model,
         contents=f"""
             Act as a Principal Software Architect. Create a high-end, professional Mermaid.js flowchart.
+
+            USE ONLY ALPHANUMERIC CHARACTERS AND SPACES IN LABELS. AVOID SYMBOLS LIKE #, :, (, ) INSIDE QUOTES.
 
 INPUT DATA:
 {parser_data}
@@ -41,6 +51,3 @@ graph TD
     )
 
     return response.text
-
-
-print(mermaid_schema())
